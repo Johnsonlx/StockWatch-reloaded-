@@ -180,7 +180,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:300;background:var(--hdr);bac
 #grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;max-width:1400px;margin:0 auto}
 
 /* STOCK CARD */
-.sc{background:var(--card);border:1px solid var(--cb);border-radius:16px;padding:18px;transition:transform .22s,border-color .22s,box-shadow .22s,background .3s;position:relative;overflow:hidden;animation:cardIn .4s ease both}
+.sc{background:var(--card);border:1px solid var(--cb);border-radius:16px;padding:18px;transition:transform .22s,border-color .22s,box-shadow .22s,background .3s;position:relative;overflow:hidden;animation:cardIn .4s ease both;cursor:pointer}
 .sc::before{content:'';position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,var(--adim) 0%,transparent 55%);pointer-events:none}
 .sc:hover{transform:translateY(-3px);border-color:var(--acc);box-shadow:0 12px 36px var(--shd)}
 .sc.hit{border-color:var(--gbr);background:var(--gbg)}
@@ -317,6 +317,50 @@ footer{position:relative;z-index:1;background:var(--sur);border-top:1px solid va
   .grow{grid-template-columns:1fr 1fr}
   .ch-name{max-width:130px}
 }
+
+/* ═══ PURCHASE DETAIL POPUP ══════════════════════════════════════════ */
+.pop-ov{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:70px 14px 20px;opacity:0;pointer-events:none;transition:opacity .22s}
+.pop-ov.open{opacity:1;pointer-events:all}
+.pop-box{background:var(--sur);border:1px solid var(--cb);border-radius:20px;width:100%;max-width:520px;max-height:84vh;overflow-y:auto;box-shadow:0 28px 70px var(--shd);transform:translateY(22px) scale(.97);transition:transform .25s cubic-bezier(.4,0,.2,1),background .3s}
+.pop-ov.open .pop-box{transform:translateY(0) scale(1)}
+.pop-hd{padding:20px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:var(--sur);border-bottom:1px solid var(--cb);padding-bottom:14px;z-index:2}
+.pop-title{font-size:1.1rem;font-weight:800}
+.pop-sub{font-size:.78rem;color:var(--sub);margin-top:3px}
+.pop-close{width:30px;height:30px;border:none;background:var(--nbg);color:var(--neg);border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:all .15s}
+.pop-close:hover{background:var(--neg);color:#fff}
+.pop-body{padding:18px 22px 22px}
+
+/* Purchase rows */
+.pur-list{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.pur-item{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:13px 15px;position:relative;transition:border-color .2s}
+.pur-item:hover{border-color:var(--acc)}
+.pur-row{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.pur-field{}
+.pur-lbl{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:4px}
+.pur-val{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:600;color:var(--tx)}
+.pur-gain{font-size:.73rem;font-family:'JetBrains Mono',monospace;margin-top:4px}
+.pur-gain.p{color:var(--pos)}.pur-gain.n{color:var(--neg)}
+.pur-date{font-size:.7rem;color:var(--mut);font-family:'JetBrains Mono',monospace;margin-top:3px}
+.pur-del-btn{width:26px;height:26px;border:none;background:var(--nbg);color:var(--neg);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;align-self:center;transition:all .15s}
+.pur-del-btn:hover{background:var(--neg);color:#fff}
+.pur-edit-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--cb)}
+.pur-save-btn{margin-top:8px;width:100%}
+
+/* Target edit section */
+.pop-tgt{background:var(--adim);border:1px solid var(--acc);border-radius:12px;padding:13px 15px;margin-bottom:18px}
+.pop-tgt-row{display:flex;gap:10px;align-items:flex-end}
+.pop-tgt-row .fi{flex:1}
+
+/* Summary strip */
+.pop-summary{background:var(--card);border:1px solid var(--cb);border-radius:12px;padding:12px 15px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:16px}
+.ps-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);font-weight:600;margin-bottom:2px}
+.ps-val{font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:700}
+
+@media(max-width:560px){
+  .pur-row{grid-template-columns:1fr 1fr auto}
+  .pur-edit-row{grid-template-columns:1fr 1fr}
+  .pop-summary{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
@@ -339,7 +383,7 @@ footer{position:relative;z-index:1;background:var(--sur);border-top:1px solid va
       <button class="tbtn"    id="tLav"   onclick="setTheme('lavender')" title="Lavender"><i class="fa-solid fa-star"></i></button>
       <button class="tbtn"    id="tMint"  onclick="setTheme('mint')"     title="Mint"><i class="fa-solid fa-leaf"></i></button>
     </div>
-    <button class="hbtn" id="nBtn" onclick="toggleNotif()"><i class="fa-solid fa-bell" id="nIco"></i><span id="nLbl">Alerts</span></button>
+
     <button class="hbtn hidden" id="userBtn" onclick="showSyncScreen()"><i class="fa-solid fa-user"></i><span id="userLbl">Konto</span></button>
     <button class="hbtn hidden" id="setupBtn" onclick="showSetupScreen()"><i class="fa-solid fa-gear"></i></button>
     <button class="rbtn" id="rBtn" onclick="doRefresh()" title="Aktualisieren"><i class="fa-solid fa-rotate" id="rIco"></i></button>
@@ -376,7 +420,8 @@ footer{position:relative;z-index:1;background:var(--sur);border-top:1px solid va
         <div class="steps">
           <div class="step"><div class="snum">1</div><div class="stxt">Kostenloses Projekt erstellen auf <a href="https://supabase.com" target="_blank">supabase.com</a></div></div>
           <div class="step"><div class="snum">2</div><div class="stxt">In <strong>Authentication → Settings</strong>: „Confirm email" <strong>deaktivieren</strong> (sonst Email-Bestätigung nötig)</div></div>
-          <div class="step"><div class="snum">3</div><div class="stxt">Im <strong>SQL Editor</strong> folgendes ausführen:</div></div>
+          <div class="step"><div class="snum">3</div><div class="stxt">In <strong>Database → Replication</strong>: Tabelle <code>sw_portfolio</code> aktivieren (für Echtzeit-Sync)</div></div>
+        <div class="step"><div class="snum">4</div><div class="stxt">Im <strong>SQL Editor</strong> folgendes ausführen:</div></div>
         </div>
         <div class="sql">create table public.sw_portfolio (
   id text primary key,
@@ -559,17 +604,81 @@ create policy "own" on public.sw_portfolio
 // ─── CONSTANTS ───────────────────────────────────────────────────────
 const FH = 'https://finnhub.io/api/v1';
 const INTV = 60000;
-const MARKET_START = 8, MARKET_END = 22; // local hours
-
 // ─── STATE ──────────────────────────────────────────────────────────
 let portfolio  = JSON.parse(localStorage.getItem('sw_p')   || '[]');
-let notified   = new Set(JSON.parse(localStorage.getItem('sw_n') || '[]'));
-let notifEnabled = localStorage.getItem('sw_ne') !== 'false';
+// notifications removed
 let apiKey     = localStorage.getItem('sw_key')  || '';
 let sbClient   = null, sbUser = null;
 let editId     = null, isRebuy = false;
 let loopTimer  = null, authMode = 'login';
 let firstRender = true; // prevent AOS double-anim on refresh
+
+// ─── CURRENCY TOGGLE ─────────────────────────────────────────────────
+let displayCurrency = localStorage.getItem('sw_cur') || 'native'; // 'native'|'USD'|'EUR'
+let fxRateUsdEur = null; // 1 USD = X EUR
+let fxRateEurUsd = null; // 1 EUR = X USD
+let fxLoading = false;
+
+async function fetchFxRate() {
+  if(fxLoading) return;
+  fxLoading = true;
+  try {
+    // Use Frankfurter API (free, no key, CORS ok)
+    const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=EUR', {signal:AbortSignal.timeout(6000)});
+    if(!r.ok) throw new Error('FX fetch failed');
+    const d = await r.json();
+    fxRateUsdEur = d.rates?.EUR;
+    fxRateEurUsd = fxRateUsdEur ? 1/fxRateUsdEur : null;
+  } catch(_) {}
+  fxLoading = false;
+}
+
+function toggleCurrency() {
+  const modes = ['native','USD','EUR'];
+  const idx = modes.indexOf(displayCurrency);
+  displayCurrency = modes[(idx+1)%modes.length];
+  localStorage.setItem('sw_cur', displayCurrency);
+  updateCurrencyBtn();
+  if(displayCurrency!=='native' && !fxRateUsdEur) {
+    fetchFxRate().then(()=>renderGrid());
+  } else {
+    renderGrid();
+  }
+}
+
+function updateCurrencyBtn() {
+  const btn = document.getElementById('curBtn');
+  const lbl = document.getElementById('curLbl');
+  if(!btn) return;
+  if(displayCurrency==='native') {
+    lbl.textContent='Eigen'; btn.className='hbtn';
+    btn.innerHTML='<i class="fa-solid fa-coins"></i><span>Eigen</span>';
+  } else if(displayCurrency==='USD') {
+    lbl.textContent='USD'; btn.className='hbtn on';
+    btn.innerHTML='<i class="fa-brands fa-dollar-sign" style="color:var(--acc)"></i><span>→ EUR</span>';
+  } else {
+    lbl.textContent='EUR'; btn.className='hbtn on';
+    btn.innerHTML='<i class="fa-solid fa-euro-sign" style="color:var(--acc)"></i><span>→ USD</span>';
+  }
+}
+
+// Convert price for display
+function displayPrice(price, nativeCur) {
+  if(!price) return {p:price, c:nativeCur||''};
+  if(displayCurrency==='native') return {p:price, c:nativeCur||''};
+  const nc=(nativeCur||'').toUpperCase();
+  if(displayCurrency==='EUR') {
+    if(nc==='EUR') return {p:price, c:'EUR'};
+    if(nc==='USD' && fxRateUsdEur) return {p:price*fxRateUsdEur, c:'EUR ~'};
+    return {p:price, c:nativeCur||''}; // can't convert
+  }
+  if(displayCurrency==='USD') {
+    if(nc==='USD') return {p:price, c:'USD'};
+    if(nc==='EUR' && fxRateEurUsd) return {p:price*fxRateEurUsd, c:'USD ~'};
+    return {p:price, c:nativeCur||''};
+  }
+  return {p:price, c:nativeCur||''};
+}
 
 // ─── THEME ──────────────────────────────────────────────────────────
 function setTheme(t) {
@@ -583,23 +692,100 @@ function setTheme(t) {
 setTheme(localStorage.getItem('sw_theme')||'dark');
 document.getElementById('fYear').textContent = new Date().getFullYear();
 
-// ─── MARKET HOURS ────────────────────────────────────────────────────
-function isMarketHours() {
-  const h = new Date().getHours();
-  return h >= MARKET_START && h < MARKET_END;
+// ─── MARKET HOURS (XETRA: Mo-Fr 09:00-17:30 CET/CEST) ───────────────
+function easterSunday(year) {
+  // Gaussian algorithm
+  const a=year%19, b=Math.floor(year/100), c=year%100;
+  const d=Math.floor(b/4), e=b%4, f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31);
+  const day=((h+l-7*m+114)%31)+1;
+  return new Date(year, month-1, day);
 }
+function addDays(d, n) { const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+
+function isGermanHoliday(d) {
+  const y=d.getFullYear(), m=d.getMonth()+1, day=d.getDate();
+  const easter=easterSunday(y);
+  const holidays=[
+    [1,1],   // Neujahr
+    [5,1],   // Tag der Arbeit
+    [10,3],  // Tag der Deutschen Einheit
+    [12,25], // 1. Weihnachtstag
+    [12,26], // 2. Weihnachtstag
+  ];
+  if(holidays.some(([hm,hd])=>hm===m&&hd===day)) return true;
+  // Easter-relative: Good Friday=-2, Easter Monday=+1, Ascension=+39, Whit Monday=+50
+  for(const offset of [-2,1,39,50]) {
+    const h=addDays(easter,offset);
+    if(h.getFullYear()===y&&(h.getMonth()+1)===m&&h.getDate()===day) return true;
+  }
+  return false;
+}
+
+function isMarketHours() {
+  if(!autoRefreshEnabled) return false;
+  // Convert current time to CET/CEST (Europe/Berlin = UTC+1 or UTC+2)
+  const now = new Date();
+  const berlinStr = now.toLocaleString('de-DE', {timeZone:'Europe/Berlin'});
+  const berlinDate = new Date(berlinStr.replace(/(\d+)\.(\d+)\.(\d+),\s*(\d+):(\d+):(\d+)/,
+    (_, d,mo,y,h,mi,s) => `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}T${h.padStart(2,'0')}:${mi}:${s}`));
+  const dow = berlinDate.getDay(); // 0=Sun, 6=Sat
+  if(dow===0||dow===6) return false; // weekend
+  if(isGermanHoliday(berlinDate)) return false;
+  const h=berlinDate.getHours(), min=berlinDate.getMinutes();
+  const mins=h*60+min;
+  return mins>=9*60 && mins<17*60+30; // 09:00 - 17:30
+}
+
+let autoRefreshEnabled = localStorage.getItem('sw_ar')!=='false';
+
+function toggleAutoRefresh() {
+  autoRefreshEnabled = !autoRefreshEnabled;
+  localStorage.setItem('sw_ar', autoRefreshEnabled);
+  updateAutoRefreshBtn();
+  updateMarketBadge();
+  if(!autoRefreshEnabled && loopTimer){ clearInterval(loopTimer); loopTimer=null; }
+  else if(autoRefreshEnabled && !loopTimer) startLoop();
+  toast(autoRefreshEnabled?'Auto-Refresh aktiviert':'Auto-Refresh deaktiviert','ti');
+}
+
+function updateAutoRefreshBtn() {
+  const btn=document.getElementById('arBtn');
+  if(!btn) return;
+  btn.innerHTML = autoRefreshEnabled
+    ? '<i class="fa-solid fa-pause"></i><span>Pause</span>'
+    : '<i class="fa-solid fa-play"></i><span>Live</span>';
+  btn.className = 'hbtn' + (autoRefreshEnabled?' on':'');
+}
+
 function updateMarketBadge() {
-  const open = isMarketHours();
-  const badge = document.getElementById('mktBadge');
-  const lbl = document.getElementById('mktLbl');
-  const dot = document.getElementById('pdot');
-  const fDot = document.getElementById('fMktDot');
-  const fTxt = document.getElementById('fMktTxt');
-  badge.className = 'mkt-badge ' + (open?'open':'closed');
-  lbl.textContent = open ? 'Markt offen' : 'Markt zu';
-  fDot.style.color = open ? 'var(--pos)' : 'var(--gld)';
-  fTxt.textContent = open ? 'Markt offen — Auto-Refresh aktiv' : 'Markt geschlossen — kein Auto-Refresh';
-  dot.className = 'pdot ' + (open?'':'off');
+  // Check XETRA open (ignores autoRefreshEnabled for the badge — show real status)
+  const mktOpen = (()=>{
+    const now=new Date();
+    const berlinStr=now.toLocaleString('de-DE',{timeZone:'Europe/Berlin'});
+    const berlinDate=new Date(berlinStr.replace(/(\d+)\.(\d+)\.(\d+),\s*(\d+):(\d+):(\d+)/,
+      (_,d,mo,y,h,mi,s)=>`${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}T${h.padStart(2,'0')}:${mi}:${s}`));
+    const dow=berlinDate.getDay();
+    if(dow===0||dow===6) return false;
+    if(isGermanHoliday(berlinDate)) return false;
+    const h=berlinDate.getHours(), min=berlinDate.getMinutes();
+    return (h*60+min)>=9*60 && (h*60+min)<17*60+30;
+  })();
+  const badge=document.getElementById('mktBadge');
+  const lbl=document.getElementById('mktLbl');
+  const dot=document.getElementById('pdot');
+  const fDot=document.getElementById('fMktDot');
+  const fTxt=document.getElementById('fMktTxt');
+  badge.className='mkt-badge '+(mktOpen?'open':'closed');
+  lbl.textContent=mktOpen?'XETRA offen':'XETRA zu';
+  if(fDot) fDot.style.color=mktOpen?'var(--pos)':'var(--gld)';
+  if(fTxt) fTxt.textContent=mktOpen
+    ?'XETRA offen (09:00–17:30) — Auto-Refresh aktiv'
+    :'XETRA geschlossen — kein Auto-Refresh';
+  dot.className='pdot '+(mktOpen&&autoRefreshEnabled?'':'off');
 }
 setInterval(updateMarketBadge, 30000);
 updateMarketBadge();
@@ -617,6 +803,7 @@ async function init() {
         sbUser = session.user;
         updateUserUI();
         await loadFromSb();
+        setupRealtimeSync();
         showApp();
       } else {
         showAuthScreen();
@@ -663,8 +850,10 @@ function showApp() {
   document.getElementById('mainFooter').classList.remove('hidden');
   document.getElementById('setupBtn').classList.remove('hidden');
   document.getElementById('fDate').valueAsDate = new Date();
-  updateNotifBtn();
   updateSyncBadge();
+  updateAutoRefreshBtn();
+  updateCurrencyBtn();
+  if(displayCurrency!=='native' && !fxRateUsdEur) fetchFxRate();
   renderGrid();
   updateSummary();
   if (portfolio.length) doRefresh();
@@ -757,6 +946,7 @@ async function doAuth() {
     if (!sbUser) throw new Error('Kein User erhalten');
     updateUserUI();
     await loadFromSb();
+    setupRealtimeSync();
     showApp();
     toast('Willkommen'+(authMode==='register'?' — Konto erstellt':'')+' 👋','ts');
   } catch(e) {
@@ -797,25 +987,44 @@ async function loadFromSb() {
   try {
     const {data,error}=await sbClient.from('sw_portfolio').select('*').eq('user_id',sbUser.id);
     if(error) throw error;
-    if (data?.length) {
-      portfolio=data.map(r=>({
-        id:r.id, symbol:r.symbol, targetPrice:r.target_price,
-        name:r.name||r.symbol, currency:r.currency||'',
-        purchases:r.purchases||[],
-        price:null, fetchError:false, lastUpd:null, nameFetched:!!r.name
-      }));
-      save();
-    }
+    // Always replace local with cloud (cloud is truth)
+    portfolio=(data||[]).map(r=>({
+      id:r.id, symbol:r.symbol, targetPrice:parseFloat(r.target_price)||0,
+      name:r.name||r.symbol, currency:r.currency||'',
+      purchases:Array.isArray(r.purchases)?r.purchases:[],
+      price:null, fetchError:false, lastUpd:null, nameFetched:!!(r.name&&r.name!==r.symbol)
+    }));
+    save();
+    toast('Portfolio geladen: '+portfolio.length+' Positionen','ts',2500);
   } catch(e) { toast('Sync-Ladefehler: '+e.message,'te'); }
+}
+
+// Set up Supabase realtime so changes from OTHER devices appear immediately
+function setupRealtimeSync() {
+  if(!sbClient||!sbUser) return;
+  sbClient.channel('sw_changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'sw_portfolio',filter:'user_id=eq.'+sbUser.id},
+      async (payload)=>{
+        console.log('Realtime event:',payload.eventType);
+        await loadFromSb();
+        renderGrid(); updateSummary();
+        toast('Portfolio aktualisiert (anderes Gerät)','ti',2500);
+      })
+    .subscribe();
 }
 async function pushSb(s) {
   if(!sbClient||!sbUser) return;
   try {
-    const {error}=await sbClient.from('sw_portfolio').upsert({
-      id:s.id, user_id:sbUser.id, symbol:s.symbol,
-      target_price:s.targetPrice, name:s.name||'', currency:s.currency||'',
-      purchases:s.purchases
-    });
+    const row = {
+      id: s.id,
+      user_id: sbUser.id,
+      symbol: s.symbol,
+      target_price: s.targetPrice,
+      name: s.name||s.symbol,
+      currency: s.currency||'',
+      purchases: s.purchases||[]
+    };
+    const {error}=await sbClient.from('sw_portfolio').upsert(row,{onConflict:'id'});
     if(error) throw error;
   } catch(e) { toast('Sync-Fehler: '+e.message,'te'); }
 }
@@ -830,7 +1039,6 @@ async function delSb(id) {
 // ─── LOCAL STORAGE ───────────────────────────────────────────────────
 function save() {
   localStorage.setItem('sw_p', JSON.stringify(portfolio));
-  localStorage.setItem('sw_n', JSON.stringify([...notified]));
 }
 
 // ─── FINNHUB API ─────────────────────────────────────────────────────
@@ -929,8 +1137,7 @@ async function doRefresh() {
       s.nameFetched=true;
       fhP(s.symbol).then(p=>{if(p?.name){s.name=p.name;s.currency=p.currency||s.currency;save();renderGrid();}}).catch(()=>{});
     }
-    if(notifEnabled && s.price>=s.targetPrice&&!notified.has(s.id)) sendNotif(s);
-    if(s.price<s.targetPrice*0.97) notified.delete(s.id);
+
   });
   if(badKey){toast('API Key ungültig (401).','te');showSetupScreen();}
   save(); renderGrid(); updateSummary();
@@ -942,9 +1149,10 @@ async function doRefresh() {
 
 function logoClick() { doRefresh(); }
 
+const INTV = 60000;
 function startLoop() {
   if(loopTimer) clearInterval(loopTimer);
-  loopTimer = setInterval(()=>{ if(isMarketHours()) doRefresh(); }, INTV);
+  loopTimer = setInterval(()=>{ if(autoRefreshEnabled && isMarketHours()) doRefresh(); }, INTV);
 }
 
 // ─── COMPUTED HELPERS ────────────────────────────────────────────────
@@ -966,7 +1174,6 @@ function renderGrid() {
   // Rebuild all cards (simple, no AOS re-trigger issues)
   g.innerHTML=portfolio.map((s,i)=>cardHTML(s,i)).join('');
   g.querySelectorAll('.bdel').forEach(b=>b.addEventListener('click',()=>delStock(b.dataset.id)));
-  g.querySelectorAll('.bedt').forEach(b=>b.addEventListener('click',()=>openEdit(b.dataset.id)));
 }
 
 function cardHTML(s, idx) {
@@ -982,7 +1189,14 @@ function cardHTML(s, idx) {
   const gainV=posV!=null?posV-inv:null;
   const gc=gain==null?'':(gain>=0?'p':'n');
   const gs=gain!=null&&gain>=0?'+':'';
-  const cur=s.currency||'';
+  const nativeCur=s.currency||'';
+  // Apply display currency conversion
+  const {p:dispPrice, c:dispCur} = displayPrice(s.price, nativeCur);
+  const {p:dispAvg} = displayPrice(avg, nativeCur);
+  const {p:dispTgt} = displayPrice(s.targetPrice, nativeCur);
+  const {p:dispInv} = displayPrice(inv, nativeCur);
+  const {p:dispPosV} = displayPrice(posV, nativeCur);
+  const cur = dispCur || nativeCur;
   const f=(n,d=2)=>n!=null?n.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
   const fc=n=>n!=null?f(n)+(cur?' '+cur:''):'—';
   const pc=gain==null?'var(--tx)':hit?'var(--gld)':gain>=0?'var(--pos)':'var(--neg)';
@@ -1009,7 +1223,7 @@ function cardHTML(s, idx) {
     ? `<div class="ch-buys"><i class="fa-solid fa-layer-group"></i> ${s.purchases.length} Käufe · Ø ${f(avg)} ${cur}</div>`
     : '';
 
-  return `<div class="sc ${hit?'hit':''} ${s.fetchError?'err':''}" style="${animStyle}" data-id="${s.id}">
+  return `<div class="sc ${hit?'hit':''} ${s.fetchError?'err':''}" style="${animStyle}" data-id="${s.id}" onclick="openPop('${s.id}')" title="Klicken für Kaufdetails">
     <div class="ch">
       <div class="ch-l">
         <div class="ch-sym">${s.symbol}</div>
@@ -1019,15 +1233,15 @@ function cardHTML(s, idx) {
       <div class="badges">${badge}</div>
     </div>
     <div class="prow">
-      <div class="pmain" style="color:${pc}">${hp?f(s.price):'—'}</div>
+      <div class="pmain" style="color:${pc}">${hp?f(dispPrice):'—'}</div>
       <div class="pcur">${cur}</div>${dayH}
     </div>
     ${s.fetchError?`<div class="errmsg"><i class="fa-solid fa-circle-exclamation"></i> Symbol nicht gefunden. WKN ≠ Ticker! US: <b>NOW</b> · DAX: <b>SAP.DE · BMW.DE</b>. <a href="https://finance.yahoo.com/lookup/" target="_blank" style="color:var(--acc)">Ticker suchen</a></div>`:''}
     <div class="dvd"></div>
     <div class="pd">
-      <div><div class="pdlbl"><i class="fa-solid fa-tag"></i> Ø Einkauf</div><div class="pdval avg">${fc(avg)}</div></div>
-      <div><div class="pdlbl"><i class="fa-solid fa-bullseye"></i> Zielpreis</div><div class="pdval">${fc(s.targetPrice)}</div></div>
-      <div><div class="pdlbl"><i class="fa-solid fa-coins"></i> Investiert</div><div class="pdval">${fc(inv)}</div></div>
+      <div><div class="pdlbl"><i class="fa-solid fa-tag"></i> Ø Einkauf</div><div class="pdval avg">${fc(dispAvg)}</div></div>
+      <div><div class="pdlbl"><i class="fa-solid fa-bullseye"></i> Zielpreis</div><div class="pdval">${fc(dispTgt)}</div></div>
+      <div><div class="pdlbl"><i class="fa-solid fa-coins"></i> Investiert</div><div class="pdval">${fc(dispInv)}</div></div>
       <div><div class="pdlbl"><i class="fa-solid fa-hashtag"></i> Stücke gesamt</div><div class="pdval">${f(tot,0)}</div></div>
     </div>
     <div class="progw">
@@ -1038,12 +1252,11 @@ function cardHTML(s, idx) {
       <div class="gi"><div class="gilbl">Gewinn %</div><div class="gival ${hit?'gg':'g'+gc}">${gain!=null?gs+f(gain)+'%':'—'}</div></div>
       <div class="gi"><div class="gilbl">Gewinn €</div><div class="gival ${hit?'gg':'g'+gc}">${gainV!=null?(gainV>=0?'+':'')+fc(gainV):'—'}</div></div>
       <div class="gi"><div class="gilbl">Zum Ziel</div><div class="gival ${hit?'gg':''}">${hit?'<i class="fa-solid fa-check"></i>':toTgt!=null?f(toTgt)+'%':'—'}</div></div>
-      <div class="gi"><div class="gilbl">Aktuell</div><div class="gival gs">${posV!=null?fc(posV):'—'}</div></div>
+      <div class="gi"><div class="gilbl">Aktuell</div><div class="gival gs">${dispPosV!=null?fc(dispPosV):'—'}</div></div>
     </div>
     <div class="cf">
       <div class="cft">${s.lastUpd?'<i class="fa-solid fa-satellite-dish"></i> '+new Date(s.lastUpd).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):'<i class="fa-regular fa-clock"></i> Noch nicht geladen'}</div>
-      <div class="cfb">
-        <button class="bic bedt" data-id="${s.id}" title="Bearbeiten/Nachkauf"><i class="fa-solid fa-pen-to-square"></i></button>
+      <div class="cfb" onclick="event.stopPropagation()">
         <button class="bic bdel" data-id="${s.id}" title="Entfernen"><i class="fa-solid fa-trash-can"></i></button>
       </div>
     </div>
@@ -1109,14 +1322,18 @@ function openEdit(id) {
   const s=portfolio.find(x=>x.id===id); if(!s) return;
   editId=id; isRebuy=false;
   document.getElementById('mTitle').innerHTML=`<i class="fa-solid fa-pen-to-square" style="color:var(--acc)"></i> ${s.symbol} bearbeiten`;
-  document.getElementById('mSub').textContent='Zielpreis ändern — für Nachkauf bitte „Aktie hinzufügen" verwenden.';
-  document.getElementById('subBtn').innerHTML='<i class="fa-solid fa-floppy-disk"></i> Speichern';
-  document.getElementById('rebuyBanner').classList.add('hidden');
+  document.getElementById('mSub').textContent='Zielpreis anpassen. Für Nachkauf „Aktie hinzufügen" verwenden.';
+  document.getElementById('subBtn').innerHTML='<i class="fa-solid fa-floppy-disk"></i> Änderung speichern';
+  const banner=document.getElementById('rebuyBanner');
+  const cur=s.currency||'';
+  const avg=avgBuyPrice(s), tot=totalShares(s);
+  banner.classList.remove('hidden');
+  banner.innerHTML=`<i class="fa-solid fa-circle-info" style="color:var(--acc)"></i> <strong>${s.purchases.length} Kauf/Käufe</strong> · Ø ${avg.toFixed(2)} ${cur} · ${tot} Stücke gesamt.<br><small style="color:var(--sub)">Hier nur den <strong>Zielpreis</strong> ändern. Für neuen Kauf → Abbrechen → „Aktie hinzufügen".</small>`;
   document.getElementById('fSym').value=s.symbol;
   const latest=[...s.purchases].sort((a,b)=>b.buyDate?.localeCompare(a.buyDate)||0)[0]||{};
-  document.getElementById('fBuy').value=latest.buyPrice||avgBuyPrice(s);
+  document.getElementById('fBuy').value=avg.toFixed(4);
   document.getElementById('fTgt').value=s.targetPrice;
-  document.getElementById('fShares').value=totalShares(s);
+  document.getElementById('fShares').value=tot;
   document.getElementById('fDate').value=latest.buyDate||'';
   document.getElementById('fTime').value=latest.buyTime||'';
   document.getElementById('ov').classList.add('open');
@@ -1138,16 +1355,18 @@ async function submitStock() {
   let stock;
 
   if (editId) {
-    // Edit: only update targetPrice (purchases are immutable in edit mode)
+    // Edit: update targetPrice and save properly
     stock=portfolio.find(x=>x.id===editId);
-    if(stock){stock.targetPrice=tgt; notified.delete(stock.id);}
+    if(stock){
+      stock.targetPrice=tgt;
+      stock.symbol=sym; // allow symbol correction
+    }
   } else if (isRebuy) {
     // Re-buy: add purchase to existing position, update target
     stock=portfolio.find(s=>s.symbol===sym);
     if(stock){
       stock.purchases.push({id:Date.now().toString(),buyPrice:buy,shares,buyDate:date,buyTime:time});
-      stock.targetPrice=tgt; // use new target (user can change it)
-      notified.delete(stock.id);
+      stock.targetPrice=tgt;
     }
   } else {
     // New position
@@ -1160,62 +1379,29 @@ async function submitStock() {
     portfolio.push(stock);
   }
 
+  if(!stock){ btn.disabled=false; toast('Fehler: Aktie nicht gefunden.','te'); return; }
   save();
-  if(sbClient&&sbUser&&stock) await pushSb(stock);
-  closeModal(); btn.disabled=false;
-  firstRender=true; // allow card animation for new additions
-  toast(`${sym} gespeichert — Kurs wird geladen…`,'ts');
-  await doRefresh();
-  firstRender=false;
+  // Close modal immediately so UI doesn't hang
+  closeModal();
+  btn.disabled=false;
+  firstRender=true;
+  renderGrid(); updateSummary();
+  toast(editId?`${sym} gespeichert ✓`:`${sym} gespeichert — Kurs wird geladen…`,'ts');
+  // Push to Supabase and refresh prices in background (non-blocking)
+  if(sbClient&&sbUser) pushSb(stock).catch(e=>toast('Sync-Fehler: '+e.message,'te'));
+  doRefresh().finally(()=>{ firstRender=false; });
 }
 
 function delStock(id){
   const s=portfolio.find(x=>x.id===id);
   if(!s||!confirm(`„${s.symbol}" und alle ${s.purchases.length} Kauf/Käufe entfernen?`))return;
-  portfolio=portfolio.filter(x=>x.id!==id); notified.delete(id);
+  portfolio=portfolio.filter(x=>x.id!==id);
   if(sbClient&&sbUser) delSb(id);
   save(); renderGrid(); updateSummary();
   toast(`${s.symbol} entfernt.`,'ti');
 }
 
-// ─── NOTIFICATIONS ────────────────────────────────────────────────────
-async function toggleNotif() {
-  if(!('Notification' in window)) return toast('Browser unterstützt keine Benachrichtigungen.','te');
-  if(Notification.permission==='granted') {
-    // Toggle our internal flag on/off
-    notifEnabled=!notifEnabled;
-    localStorage.setItem('sw_ne',notifEnabled);
-    updateNotifBtn();
-    toast(notifEnabled?'Kursalarme aktiviert 🔔':'Kursalarme pausiert 🔕','ti');
-    return;
-  }
-  if(Notification.permission==='denied') {
-    toast('Benachrichtigungen im Browser blockiert. Bitte in Browser-Einstellungen aktivieren.','tw',5000);
-    return;
-  }
-  const p=await Notification.requestPermission();
-  if(p==='granted'){notifEnabled=true;localStorage.setItem('sw_ne','true');}
-  updateNotifBtn();
-  if(p==='granted') toast('Benachrichtigungen aktiviert! 🔔','ts');
-  else toast('Benachrichtigungen abgelehnt.','te');
-}
-function updateNotifBtn() {
-  const perm=Notification.permission==='granted';
-  const btn=document.getElementById('nBtn');
-  document.getElementById('nIco').className=perm&&notifEnabled?'fa-solid fa-bell':'fa-solid fa-bell-slash';
-  document.getElementById('nLbl').textContent=perm&&notifEnabled?'Aktiv':perm?'Pausiert':'Alerts';
-  btn.className='hbtn'+(perm&&notifEnabled?' on':perm?' warn':'');
-}
-function sendNotif(s){
-  if(Notification.permission!=='granted'||!notifEnabled) return;
-  const gain=((s.price-avgBuyPrice(s))/avgBuyPrice(s)*100).toFixed(1);
-  new Notification(`🎯 Ziel erreicht: ${s.symbol}`,{
-    body:`${s.symbol} bei ${s.price.toFixed(2)} ${s.currency||''} · Ziel ${s.targetPrice.toFixed(2)} · +${gain}% Gewinn`,
-    tag:s.id, requireInteraction:true
-  });
-  notified.add(s.id); save();
-  toast(`🎯 ${s.symbol} hat Zielpreis ${s.targetPrice.toFixed(2)} erreicht! +${gain}%`,'tw',7000);
-}
+// notifications removed
 
 // ─── EXPORT / IMPORT ─────────────────────────────────────────────────
 function exportJSON(){
@@ -1253,6 +1439,151 @@ function importJSON(e){
   e.target.value='';
 }
 
+
+// ─── PURCHASE DETAIL POPUP ───────────────────────────────────────────
+let popStockId = null;
+
+function openPop(id) {
+  const s = portfolio.find(x=>x.id===id); if(!s) return;
+  popStockId = id;
+  const cur = s.currency||'';
+  const avg = avgBuyPrice(s), tot = totalShares(s), inv = investedVal(s);
+  const hp = s.price!=null&&!s.fetchError;
+  const gain = hp ? (s.price-avg)/avg*100 : null;
+  const gainV = hp ? s.price*tot - inv : null;
+  const f = (n,d=2) => n!=null ? n.toLocaleString('de-DE',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+  const fc = n => n!=null ? f(n)+(cur?' '+cur:'') : '—';
+  const gs = gain!=null&&gain>=0?'+':'';
+
+  document.getElementById('popTitle').textContent = s.symbol + (s.name&&s.name!==s.symbol ? ' — ' + s.name : '');
+  document.getElementById('popSub').textContent = s.purchases.length + ' Kauf/Käufe · Zielpreis: ' + fc(s.targetPrice);
+
+  // Summary strip
+  const sumHtml = `<div class="pop-summary">
+    <div><div class="ps-lbl">Ø Einkauf</div><div class="ps-val" style="color:var(--acc)">${fc(avg)}</div></div>
+    <div><div class="ps-lbl">Stücke</div><div class="ps-val">${f(tot,0)}</div></div>
+    <div><div class="ps-lbl">Investiert</div><div class="ps-val">${fc(inv)}</div></div>
+    <div><div class="ps-lbl">Gewinn</div><div class="ps-val ${gain==null?'':gain>=0?'gp':'gn'}">${gain!=null?gs+f(gain)+'%':'—'}</div></div>
+  </div>`;
+
+  // Target edit
+  const tgtHtml = `<div class="pop-tgt">
+    <div class="pur-lbl" style="margin-bottom:8px"><i class="fa-solid fa-bullseye"></i> Zielpreis anpassen</div>
+    <div class="pop-tgt-row">
+      <input class="fi" id="popTgtInput" type="number" step="0.01" value="${s.targetPrice}" placeholder="Zielpreis">
+      <button class="btn btn-acc btn-sm" onclick="savePopTarget('${id}')"><i class="fa-solid fa-floppy-disk"></i> Speichern</button>
+    </div>
+  </div>`;
+
+  // Purchase rows
+  const sortedP = [...s.purchases].sort((a,b)=>b.buyDate?.localeCompare(a.buyDate||'')||0);
+  const purHtml = sortedP.map((p,i)=>{
+    const purGain = hp ? (s.price - p.buyPrice)/p.buyPrice*100 : null;
+    const purGainV = hp ? (s.price - p.buyPrice)*p.shares : null;
+    const gc = purGain==null?'':(purGain>=0?'p':'n');
+    const gs2 = purGain!=null&&purGain>=0?'+':'';
+    const dStr = p.buyDate ? new Date(p.buyDate+'T12:00:00').toLocaleDateString('de-DE') : '—';
+    return `<div class="pur-item" id="purItem_${p.id}">
+      <div class="pur-row">
+        <div class="pur-field">
+          <div class="pur-lbl"><i class="fa-solid fa-tag"></i> Einkaufspreis</div>
+          <div class="pur-val">${fc(p.buyPrice)}</div>
+          ${purGain!=null?`<div class="pur-gain ${gc}">${gs2}${f(purGain)}%</div>`:''}
+        </div>
+        <div class="pur-field">
+          <div class="pur-lbl"><i class="fa-solid fa-hashtag"></i> Stücke</div>
+          <div class="pur-val">${f(p.shares,0)}</div>
+          ${purGainV!=null?`<div class="pur-gain ${gc}">${purGainV>=0?'+':''}${fc(purGainV)}</div>`:''}
+        </div>
+        <div class="pur-field">
+          <div class="pur-lbl"><i class="fa-solid fa-calendar"></i> Datum</div>
+          <div class="pur-val" style="font-size:.82rem">${dStr}</div>
+          <div class="pur-date">${p.buyTime||''}</div>
+        </div>
+        <button class="pur-del-btn" onclick="deletePurchase('${id}','${p.id}')" title="Kauf entfernen"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+      <!-- Inline edit row -->
+      <div class="pur-edit-row">
+        <div><div class="pur-lbl">Neuer Preis</div><input class="fi" id="pep_${p.id}" type="number" step="0.0001" value="${p.buyPrice}" style="padding:6px 9px;font-size:.82rem"></div>
+        <div><div class="pur-lbl">Neue Stückzahl</div><input class="fi" id="pes_${p.id}" type="number" step="0.001" value="${p.shares}" style="padding:6px 9px;font-size:.82rem"></div>
+        <div><div class="pur-lbl">Datum</div><input class="fi" id="ped_${p.id}" type="date" value="${p.buyDate||''}" style="padding:6px 9px;font-size:.82rem"></div>
+      </div>
+      <button class="btn btn-acc btn-sm pur-save-btn" onclick="savePurchaseEdit('${id}','${p.id}')"><i class="fa-solid fa-pen-to-square"></i> Kauf ${i+1} speichern</button>
+    </div>`;
+  }).join('');
+
+  const addBtn = `<button class="btn btn-ghost btn-sm" onclick="openRebuyFromPop('${id}')" style="width:100%"><i class="fa-solid fa-plus"></i> Weiteren Kauf hinzufügen</button>`;
+
+  document.getElementById('popBody').innerHTML = sumHtml + tgtHtml + `<div class="pur-lbl" style="margin-bottom:8px"><i class="fa-solid fa-list"></i> Einzelne Käufe</div>` + `<div class="pur-list">${purHtml}</div>` + addBtn;
+  document.getElementById('popOv').classList.add('open');
+}
+
+function openRebuyFromPop(stockId) {
+  closePop();
+  openModal();
+  setTimeout(()=>{
+    const s=portfolio.find(x=>x.id===stockId);
+    if(!s) return;
+    document.getElementById('fSym').value=s.symbol;
+    checkDuplicate();
+  },100);
+}
+
+function closePop() {
+  document.getElementById('popOv').classList.remove('open');
+  popStockId=null;
+}
+
+async function savePopTarget(stockId) {
+  const s = portfolio.find(x=>x.id===stockId); if(!s) return;
+  const val = parseFloat(document.getElementById('popTgtInput').value);
+  if(isNaN(val)||val<=0) return toast('Ungültiger Zielpreis.','te');
+  const avg = avgBuyPrice(s);
+  if(val<=avg) return toast('Zielpreis muss > Durchschnittseinkaufspreis sein.','te');
+  s.targetPrice=val;
+  save();
+  if(sbClient&&sbUser) await pushSb(s);
+  renderGrid(); updateSummary();
+  // refresh popup
+  closePop(); openPop(stockId);
+  toast('Zielpreis aktualisiert ✓','ts');
+}
+
+async function savePurchaseEdit(stockId, purchaseId) {
+  const s = portfolio.find(x=>x.id===stockId); if(!s) return;
+  const p = s.purchases.find(x=>x.id===purchaseId); if(!p) return;
+  const newPrice  = parseFloat(document.getElementById('pep_'+purchaseId)?.value);
+  const newShares = parseFloat(document.getElementById('pes_'+purchaseId)?.value);
+  const newDate   = document.getElementById('ped_'+purchaseId)?.value;
+  if(isNaN(newPrice)||newPrice<=0) return toast('Ungültiger Preis.','te');
+  if(isNaN(newShares)||newShares<=0) return toast('Ungültige Stückzahl.','te');
+  p.buyPrice = newPrice; p.shares = newShares; p.buyDate = newDate||p.buyDate;
+  save();
+  if(sbClient&&sbUser) await pushSb(s);
+  renderGrid(); updateSummary();
+  closePop(); openPop(stockId);
+  toast('Kauf aktualisiert ✓','ts');
+}
+
+async function deletePurchase(stockId, purchaseId) {
+  const s = portfolio.find(x=>x.id===stockId); if(!s) return;
+  if(s.purchases.length<=1) {
+    if(!confirm(`„${s.symbol}" hat nur einen Kauf — Position komplett entfernen?`)) return;
+    portfolio=portfolio.filter(x=>x.id!==stockId);
+    if(sbClient&&sbUser) await delSb(stockId);
+    save(); renderGrid(); updateSummary();
+    closePop(); toast(`${s.symbol} entfernt.`,'ti');
+    return;
+  }
+  if(!confirm('Diesen Kauf entfernen?')) return;
+  s.purchases = s.purchases.filter(x=>x.id!==purchaseId);
+  save();
+  if(sbClient&&sbUser) await pushSb(s);
+  renderGrid(); updateSummary();
+  closePop(); openPop(stockId);
+  toast('Kauf entfernt ✓','ti');
+}
+
 // ─── TOAST ───────────────────────────────────────────────────────────
 function toast(msg,cls='ti',dur=3500){
   const c=document.getElementById('tc');
@@ -1264,7 +1595,10 @@ function toast(msg,cls='ti',dur=3500){
 
 // ─── KEYBOARD ────────────────────────────────────────────────────────
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape') closeModal();
+  if(e.key==='Escape'){
+    if(document.getElementById('popOv').classList.contains('open')) closePop();
+    else closeModal();
+  }
   if(e.key==='Enter'&&document.getElementById('ov').classList.contains('open')){
     if(document.activeElement.id!=='histBtn') submitStock();
   }
@@ -1277,5 +1611,19 @@ document.getElementById('ov').addEventListener('click',e=>{
 firstRender=true;
 init().then(()=>{ firstRender=false; });
 </script>
+<!-- ══════════════ PURCHASE DETAIL POPUP ═════════════════════════════ -->
+<div class="pop-ov" id="popOv" onclick="if(event.target===this)closePop()">
+  <div class="pop-box" id="popBox">
+    <div class="pop-hd">
+      <div>
+        <div class="pop-title" id="popTitle">Käufe</div>
+        <div class="pop-sub" id="popSub"></div>
+      </div>
+      <button class="pop-close" onclick="closePop()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="pop-body" id="popBody"></div>
+  </div>
+</div>
+
 </body>
 </html>
