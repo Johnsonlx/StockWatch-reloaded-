@@ -403,13 +403,16 @@ footer{position:relative;z-index:1;background:var(--sur);border-top:1px solid va
       </div>
       <!-- Tab 0 -->
       <div class="spanel on" id="sp0">
+        <!-- Hidden honeypot: prevents browser from treating this as a login form -->
+        <input type="text" style="display:none" aria-hidden="true" tabindex="-1" autocomplete="username">
+        <input type="password" style="display:none" aria-hidden="true" tabindex="-1" autocomplete="current-password">
         <div class="steps">
           <div class="step"><div class="snum">1</div><div class="stxt">Registrieren auf <a href="https://finnhub.io/register" target="_blank">finnhub.io/register</a> — kostenlos, kein Abo.</div></div>
           <div class="step"><div class="snum">2</div><div class="stxt"><strong>API Key</strong> vom Dashboard kopieren (60 Abfragen/Min. im Free-Plan).</div></div>
           <div class="step"><div class="snum">3</div><div class="stxt">Key einfügen und bestätigen. Wird nur lokal gespeichert.</div></div>
         </div>
         <div class="srow">
-          <input class="si" id="siKey" type="text" placeholder="Ihr Finnhub API Key…">
+          <input class="si" id="siKey" type="text" placeholder="Ihr Finnhub API Key…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
           <button class="btn btn-acc btn-sm" id="btnKey" onclick="saveKey()"><i class="fa-solid fa-check"></i> OK</button>
         </div>
         <p style="font-size:.72rem;color:var(--mut);margin-top:9px"><i class="fa-solid fa-circle-info"></i> DAX: <span class="mono" style="color:var(--acc)">SAP.DE · BMW.DE · SIE.DE · BAS.DE · ALV.DE · DTE.DE</span></p>
@@ -439,9 +442,9 @@ create policy "own" on public.sw_portfolio
         <div class="steps">
           <div class="step"><div class="snum">4</div><div class="stxt">In <strong>Settings → API</strong>: Project URL + anon/public Key kopieren und einfügen:</div></div>
         </div>
-        <div class="fg"><input class="si" id="siUrl" type="text" placeholder="https://xxxx.supabase.co"></div>
+        <div class="fg"><input class="si" id="siUrl" type="text" placeholder="https://xxxx.supabase.co" autocomplete="off" autocorrect="off" spellcheck="false"></div>
         <div class="srow">
-          <input class="si" id="siSb"  type="text" placeholder="anon / public key…">
+          <input class="si" id="siSb" type="text" placeholder="anon / public key…" autocomplete="off" autocorrect="off" spellcheck="false">
           <button class="btn btn-acc btn-sm" id="btnSb" onclick="saveSb()"><i class="fa-solid fa-cloud-arrow-up"></i> Verbinden</button>
         </div>
         <button class="btn btn-ghost btn-sm" onclick="skipSb()" style="margin-top:10px"><i class="fa-solid fa-arrow-right"></i> Überspringen — nur lokal</button>
@@ -825,10 +828,17 @@ function showSetupScreen() {
   document.getElementById('setupScreen').classList.remove('hidden');
   document.getElementById('app').classList.add('hidden');
   document.getElementById('mainFooter').classList.add('hidden');
+  // Pre-fill saved values so user doesn't have to re-type
   if (apiKey) document.getElementById('siKey').value = apiKey;
   const su=localStorage.getItem('sw_sb_url'), sk=localStorage.getItem('sw_sb_key');
   if(su) document.getElementById('siUrl').value=su;
   if(sk) document.getElementById('siSb').value=sk;
+  // Clear any browser-autofilled garbage after a short delay
+  setTimeout(()=>{
+    const keyField = document.getElementById('siKey');
+    // If autofill put something wrong (e.g. email), restore saved key
+    if(apiKey && keyField.value !== apiKey) keyField.value = apiKey;
+  }, 300);
 }
 function showAuthScreen() {
   hideAllScreens();
